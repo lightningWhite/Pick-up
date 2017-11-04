@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Pick-up!</string>
+    <string name="detailed_search">Detailed Search</string>
+    <string name="quick_search">Quick Search</string>
+    <string name="day">Day</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string-array name="games_array">
+        <item>Game</item>
+        <item>Basketball</item>
+        <item>Badminton</item>
+        <item>Football</item>
+        <item>Golf</item>
+        <item>Hockey</item>
+        <item>Raquetball</item>
+        <item>Rugby</item>
+        <item>Soccer</item>
+        <item>Spike Ball</item>
+        <item>Soft Ball</item>
+        <item>Ultimate Frisbee</item>
+        <item>Volley Ball</item>
+        <item>Walley Ball</item>
+        <item>Other</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="place">Place</string>
+    <string name="create_game">Create a Game</string>
+    <string name="join">Join</string>
+</resources>
