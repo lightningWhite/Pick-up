@@ -22,14 +22,16 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
 
     // 13 Game types
     String games[] = {"Basketball", "Badminton", "Football", "Golf", "Hockey",
-            "Raquetball", "Rugby", "Softball", "Soccer", "Spike Ball", "Ultimate Frisbee",
+            "Racquetball", "Rugby", "Softball", "Soccer", "Spike Ball", "Ultimate Frisbee",
             "Volley Ball", "Walley Ball"};
 
     String days[] = {"Mon", "Tue", "Wed", "Thur", "Fri", "Sat"};
 
-    // 16 players
+    // 28 players
     String players[] = {"Joe", "Sally", "John", "Caleb", "Kevin", "Corey", "Robert", "Ryan",
-            "Vanessa", "Connor", "Tucker", "Annie", "Karley", "Kendra", "Samantha", "Kayla"};
+            "Janessa", "Connor", "Tucker", "Annie", "Karley", "Kendra", "Samantha", "Kayla",
+            "Tyler", "Thomas", "Ben", "Jordan", "Bryan", "Lee", "Madi", "Heather", "Paul",
+            "Sarah", "Deborah", "Diana"};
 
     // Four Outdoor locations
     String outdoorLocations[] = {"Upper Playing Fields", "Football field",
@@ -79,16 +81,21 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
         int high = 0;
 
         for (int i = 0; i < numGames; i++) {
+            Game newGame = new Game();
+
             listItem = "";
+
             // Generate a random game
             low = 0;
             high = 13;
             game = games[rand.nextInt(high-low) + low];
+            newGame.setGameType(game);
 
             // Generate an hour between 3 and 10
             low = 3;
             high = 10 + 1;
             hour = rand.nextInt(high-low) + low;
+            newGame.setTime(hour + ":00PM");
 
             // Generate a random day between Monday and Saturday
             low =0;
@@ -99,6 +106,9 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
             low = 1;
             high = 31;
             date = rand.nextInt(high-low) + low;
+
+            newGame.setComments("Come for a great game!");
+            newGame.setDate(day + ". Nov " + date + ", 2017");
 
             // Generate a random number of players
             low = 1;
@@ -111,13 +121,9 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
             publishProgress(listItem);
             Log.d("PopulateListTask", listItem);
 
-            Game newGame = new Game();
-            newGame.setComments("Come for a great game!");
-            newGame.setDate(day + " " + date);
-
             // Generate a location
             if (game == "Football" || game == "Rugby" || game == "Softball" || game == "Soccer"
-                    || game == "Spikeball" || game == "Ultimate Frisbee") {
+                    || game == "Spike Ball" || game == "Ultimate Frisbee") {
                 low = 0;
                 high = 4;
                 newGame.setLocation(outdoorLocations[rand.nextInt(high - low)]);
@@ -137,15 +143,15 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
                 newGame.setLocation("TBD");
             }
 
+            List<String> playerList = new ArrayList<>();
+
             // Generate a list of players
             for (int j = 0; j < numPlayers; j++) {
-                List<String> playerList = new ArrayList<>();
-
                 low = 0;
-                high = 16;
+                high = 28;
                 playerList.add(players[rand.nextInt(high - low)]);
-                newGame.setPlayers(playerList);
             }
+            newGame.setPlayers(playerList);
 
             _games.add(newGame);
         }
