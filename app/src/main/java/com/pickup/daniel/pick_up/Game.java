@@ -8,6 +8,7 @@ import java.util.List;
  */
 
 public class Game {
+    String gameType;
     String comments;
     String date;
     String time;
@@ -15,11 +16,20 @@ public class Game {
     List<String> players;
 
     public void Game() {
+        gameType = "";
         comments = "";
         time = "";
         date = "";
         location = "";
         players = new ArrayList<>();
+    }
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
     }
 
     public String getComments() {
