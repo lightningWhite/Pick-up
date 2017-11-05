@@ -114,6 +114,7 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
             low = 1;
             high = 16;
             numPlayers = rand.nextInt(high-low) + low;
+            newGame.setNumPlayers(numPlayers);
 
             // Create the string that will be displayed in the list view
             listItem = game + " - " + hour + ":00PM, " + day + " " + date + " - Players: " + numPlayers;
