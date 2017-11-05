@@ -13,6 +13,7 @@ public class Game {
     String date;
     String time;
     String location;
+    int numPlayers;
     List<String> players;
 
     public void Game() {
@@ -62,6 +63,14 @@ public class Game {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public void setNumPlayers(int numPlayers) {
+        this.numPlayers = numPlayers;
     }
 
     public List<String> getPlayers() {
