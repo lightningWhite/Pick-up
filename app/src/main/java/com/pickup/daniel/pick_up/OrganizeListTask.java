@@ -33,7 +33,7 @@ public class OrganizeListTask extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         for (Game game: _games) {
-            String listItem = game.gameType + " - " +  game.getTime() + "PM, " +
+            String listItem = game.gameType + " - " +  game.getTime() + ", " +
                     game.getDate() + " - Players: " + game.getNumPlayers();
             publishProgress(listItem);
         }
