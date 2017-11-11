@@ -7,7 +7,7 @@
     tools:context="com.pickup.daniel.pick_up.MainActivity">
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/gamesSpinner"
         android:layout_width="130dp"
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
@@ -28,8 +28,8 @@
         android:text="@string/detailed_search"
         android:textAlignment="center"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/spinner"
-        app:layout_constraintRight_toRightOf="@+id/spinner"
+        app:layout_constraintLeft_toLeftOf="@+id/gamesSpinner"
+        app:layout_constraintRight_toRightOf="@+id/gamesSpinner"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="53dp" />
 
@@ -41,9 +41,9 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/date"
-        app:layout_constraintLeft_toLeftOf="@+id/spinner"
-        app:layout_constraintRight_toRightOf="@+id/spinner"
-        app:layout_constraintTop_toBottomOf="@+id/spinner"
+        app:layout_constraintLeft_toLeftOf="@+id/gamesSpinner"
+        app:layout_constraintRight_toRightOf="@+id/gamesSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/gamesSpinner"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
 
@@ -57,21 +57,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button"
         android:layout_marginStart="8dp" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="130dp"
-        android:layout_height="35dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/place"
-        android:inputType="textPersonName"
-        android:textAlignment="viewStart"
-        android:textSize="14sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -87,7 +72,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/spinner"
+        app:layout_constraintLeft_toRightOf="@+id/gamesSpinner"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -111,9 +96,10 @@
         android:id="@+id/checkBox4"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        app:layout_constraintLeft_toRightOf="@+id/editText"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editText" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/numPlayersSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <TextView
         android:id="@+id/textView3"
@@ -142,16 +128,22 @@
     <ListView
         android:id="@+id/gamesListView"
         android:layout_width="173dp"
-        android:layout_height="441dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
+        android:layout_height="0dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.272"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/numPlayersSpinner"
+        android:layout_width="130dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,6 +1,5 @@
 package com.pickup.daniel.pick_up;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
@@ -41,14 +39,24 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // Game selector spinner
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner gameSpinner = (Spinner) findViewById(R.id.gamesSpinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> gameSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.games_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gameSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        gameSpinner.setAdapter(gameSpinnerAdapter);
+
+        // Game selector spinner
+        Spinner numPlayersSpinner = (Spinner) findViewById(R.id.numPlayersSpinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> numPlayersSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.num_players_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        numPlayersSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        numPlayersSpinner.setAdapter(numPlayersSpinnerAdapter);
 
         // Adapter for the list view
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item);
