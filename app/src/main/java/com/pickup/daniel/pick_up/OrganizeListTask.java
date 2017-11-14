@@ -10,14 +10,14 @@ import java.util.List;
  * Created by Daniel on 11/4/2017.
  */
 
-public class OrganizeListTask extends AsyncTask<Void, String, Void> {
+public class OrganizeListTask extends AsyncTask<Void, Game, Void> {
 
     Context _currentContext;
     // We need to pass the Array Adapter here so we can use it
-    ArrayAdapter<String> _theAdapter;
+    GameAdapter _theAdapter;
     List<Game> _games;
 
-    OrganizeListTask(ArrayAdapter<String> theAdapter, Context theContext, List<Game> games) {
+    OrganizeListTask(GameAdapter theAdapter, Context theContext, List<Game> games) {
 
         _theAdapter = theAdapter;
         _currentContext = theContext;
@@ -33,16 +33,16 @@ public class OrganizeListTask extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         for (Game game: _games) {
-            String listItem = game.gameType + " - " +  game.getTime() + ", " +
-                    game.getDate() + " - Players: " + game.getNumPlayers();
-            publishProgress(listItem);
+//            String listItem = game.gameType + " - " +  game.getTime() + ", " +
+//                    game.getDate() + " - Players: " + game.getNumPlayers();
+            publishProgress(game);
         }
         return null;
     }
 
     // Main thread. This method can modify the GUI
     @Override
-    protected void onProgressUpdate(String... values) {
+    protected void onProgressUpdate(Game... values) {
         _theAdapter.add(values[0]);
         super.onProgressUpdate(values);
     }

@@ -13,7 +13,9 @@ public class Game {
     String date;
     String time;
     String location;
+    String listString;
     int numPlayers;
+
     List<String> players;
 
     public void Game() {
@@ -63,6 +65,11 @@ public class Game {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getListString() {
+        listString = gameType + " - " + time + ", " + date + " - Players: " + numPlayers;
+        return listString;
     }
 
     public int getNumPlayers() {

@@ -18,7 +18,7 @@ import java.util.Random;
  * Created by Daniel on 10/21/2017.
  */
 
-public class PopulateListTask extends AsyncTask<Void, String, Void> {
+public class PopulateListTask extends AsyncTask<Void, Game, Void> {
 
     // 13 Game types
     String games[] = {"Basketball", "Badminton", "Football", "Golf", "Hockey",
@@ -42,10 +42,10 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
 
     Context _currentContext;
     // We need to pass the Array Adapter here so we can use it
-    ArrayAdapter<String> _theAdapter;
+    GameAdapter _theAdapter;
     List<Game> _games;
 
-    PopulateListTask(ArrayAdapter<String> theAdapter, Context theContext, List<Game> games) {
+    PopulateListTask(GameAdapter theAdapter, Context theContext, List<Game> games) {
 
         _theAdapter = theAdapter;
         _currentContext = theContext;
@@ -119,7 +119,7 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
             // Create the string that will be displayed in the list view
             listItem = game + " - " + hour + ":00PM, " + day + " " + date + " - Players: " + numPlayers;
             //listItem.format("%s -- %d:00PM, %s %d -- Players: %d", game, hour, day, date, numPlayers);
-            publishProgress(listItem);
+            //publishProgress(listItem);
             Log.d("PopulateListTask", listItem);
 
             // Generate a location
@@ -154,7 +154,8 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
             }
             newGame.setPlayers(playerList);
 
-            _games.add(newGame);
+            publishProgress(newGame);
+            //_games.add(newGame);
         }
 
         return null;
@@ -162,9 +163,9 @@ public class PopulateListTask extends AsyncTask<Void, String, Void> {
 
     // Main thread. This method can modify the GUI
     @Override
-    protected void onProgressUpdate(String... values) {
-        _theAdapter.add(values[0]);
+    protected void onProgressUpdate(Game... values) {
         super.onProgressUpdate(values);
+        _theAdapter.add(values[0]);
     }
 
     // Main thread.

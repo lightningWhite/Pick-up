@@ -34,13 +34,13 @@
         tools:layout_editor_absoluteX="53dp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/dateButton"
         android:layout_width="130dp"
         android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:onClick="showDatePickerDialog"
+        android:onClick="onDateButton"
         android:text="@string/date"
         app:layout_constraintLeft_toLeftOf="@+id/gamesSpinner"
         app:layout_constraintRight_toRightOf="@+id/gamesSpinner"
@@ -55,7 +55,7 @@
         android:onClick="showTimePickerDialog"
         android:text="@string/time"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/dateButton" />
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -80,8 +80,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/button"
-        app:layout_constraintBaseline_toBaselineOf="@+id/button" />
+        app:layout_constraintLeft_toRightOf="@+id/dateButton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/dateButton" />
 
     <CheckBox
         android:id="@+id/checkBox3"
