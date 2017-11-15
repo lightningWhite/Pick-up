@@ -13,12 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements DatePickerFragment.DatePickerFragmentListener {
     public static final String EXTRA_GAME = "com.example.daniel.GAME";
@@ -27,8 +31,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
     GameAdapter _gameAdapter;
     ArrayList<Game> _gamesList = new ArrayList<>();
-    Date dateFromDatePicker = new Date();
-    Date dateSelected = new Date();
+    String dateFromDatePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,24 +139,32 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     @Override
     public void onDateSet(Date date) {
         // This method will be called with the date from the `DatePicker`.
-        dateFromDatePicker = date;
-        // Todo: This is getting called on the NEXT time you click ok, not the first time.
+        dateFromDatePicker = date.toString();
+        Log.d("MainActivity", "THE ON DATE SET METHOD IS GETTING NOTIFIED!!!!!! " + dateFromDatePicker.toString());
+        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
+
+        String simpleDate = "";
+
+        // Place each character of the variable into a string until end of block or end of
+        // string
+        int i = 0;
+        int spaceCount = 0;
+        while (i < dateFromDatePicker.length() && spaceCount < 3) {
+            simpleDate += dateFromDatePicker.charAt(i);
+
+            if (dateFromDatePicker.charAt(i) == ' ') {
+                spaceCount++;
+            }
+            // Go to the next letter in the variable
+            i++;
+        }
+        selectedDate.setText(simpleDate);
     }
 
     public void onDateButton(View view) {
         DatePickerFragment fragment = DatePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
-        dateSelected = dateFromDatePicker;
-        Log.d("MainActivity", "THIS IS THE DATE: " + dateSelected.toString());
-        final Button dateButton = (Button) findViewById(R.id.dateButton);
-
-        // Todo: Trying to set the text of the button doesn't seem to work very well. Set a text field with the selected date?
-//        dateButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dateButton.setText((CharSequence) dateSelected);
-//            }
-//        });
+        // The date will be sent to the onDateSet listener
     }
 
     public void showDatePickerDialog(View v) {
