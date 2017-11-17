@@ -3,6 +3,7 @@ package com.pickup.daniel.pick_up;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.view.TintableBackgroundView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +26,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Text;
 
-public class MainActivity extends AppCompatActivity implements DatePickerFragment.DatePickerFragmentListener {
+public class MainActivity extends AppCompatActivity implements DatePickerFragment.DatePickerFragmentListener, TimePickerFragment.TimePickerFragmentListener {
     public static final String EXTRA_GAME = "com.example.daniel.GAME";
     final String GAMES_FILE = "savedGames";
     final String GAME_KEY = "gameKey";
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     GameAdapter _gameAdapter;
     ArrayList<Game> _gamesList = new ArrayList<>();
     String dateFromDatePicker;
+    int hourOfDayFromTimePicker;
+    int minuteFromTimePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +165,55 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         selectedDate.setText(simpleDate);
     }
 
+    @Override
+    public void onTimeSet(int hourOfDay, int minute) {
+        // This method will be called with the date from the `DatePicker`.
+        hourOfDayFromTimePicker = hourOfDay;
+        minuteFromTimePicker = minute;
+
+        String amPm = "";
+        if (hourOfDayFromTimePicker > 11) {
+            amPm = "PM";
+            hourOfDayFromTimePicker %= 12; // convert from 24 hour
+
+            if (hourOfDayFromTimePicker == 12) {
+                hourOfDayFromTimePicker = 12;
+            }
+        }
+        else {
+            amPm = "AM";
+        }
+
+        if (hourOfDayFromTimePicker == 0) {
+            hourOfDayFromTimePicker = 12;
+        }
+
+        String minuteForm = "";
+        if (minuteFromTimePicker < 10) {
+            minuteForm = "0" + Integer.toString(minute);
+        }
+        else {
+            minuteForm = Integer.toString(minute);
+        }
+
+        String displayTime = Integer.toString(hourOfDayFromTimePicker) + ":" + minuteForm + amPm;
+
+        Log.d("MainActivity", "THE ON TIME SET METHOD IS GETTING NOTIFIED!!!!!! " +
+                displayTime);
+
+        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
+        selectedTime.setText(displayTime);
+
+    }
+
     public void onDateButton(View view) {
         DatePickerFragment fragment = DatePickerFragment.newInstance(this);
+        fragment.show(getFragmentManager(), "datePicker");
+        // The date will be sent to the onDateSet listener
+    }
+
+    public void onTimeButton(View view) {
+        TimePickerFragment fragment = TimePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
         // The date will be sent to the onDateSet listener
     }
