@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Daniel on 11/9/2017.
@@ -16,12 +17,15 @@ import java.util.ArrayList;
 
 public class GameAdapter extends ArrayAdapter<Game> {
 
+    List<Game> _items;
+
     private static class ViewHolder {
         private TextView itemView;
     }
 
-    public GameAdapter(Context context, int textViewResourceId, ArrayList<Game> items) {
+    public GameAdapter(Context context, int textViewResourceId, List<Game> items) {
         super(context, textViewResourceId, items);
+        _items = items;
     }
 
     @Override
@@ -47,7 +51,15 @@ public class GameAdapter extends ArrayAdapter<Game> {
 //        gameTypeField.setText(game.getDate());
 //        gameTypeField.setText(game.getNumPlayers());
 
+
+
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    public void updateGamesList(List<Game> newlist) {
+        _items.clear();
+        _items.addAll(newlist);
+        this.notifyDataSetChanged();
     }
 }
