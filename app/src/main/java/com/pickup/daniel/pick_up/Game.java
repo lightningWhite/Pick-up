@@ -16,6 +16,7 @@ public class Game {
     String location;
     String listString;
     int numPlayers;
+    String _compareDate;
 
     // This filter data will be used for the predicate in the sorting of the games list
     // Index: 0 = GameType, 1 = Hour.Minute, 2 = Month.DayOfMonth, 3 = NumPlayers
@@ -101,6 +102,14 @@ public class Game {
         this.filterData = filterData;
     }
 
+    public String get_compareDate() {
+        return _compareDate;
+    }
+
+    public void set_compareDate(String compareDate) {
+        this._compareDate = compareDate;
+    }
+
     /*Comparator for sorting the list by game type*/
     public static Comparator<Game> GameTypeComparator = new Comparator<Game>() {
 
@@ -121,7 +130,43 @@ public class Game {
             String date1 = g1.getDate();
             String date2 = g2.getDate();
 
-            /*For ascending order*/
+            // Place each character of the variable into a string until end of block or end of
+            // string
+//            int i = 0;
+//            int spaceCount = 0;
+//            String dayOfMonth1 = "";
+//            while (i < date1.length() && spaceCount < 2) {
+//                if (date1.charAt(i) == ' ') {
+//                    spaceCount++;
+//                }
+//                // Go to the next letter in the variable
+//                i++;
+//            }
+//            while (i < date1.length()) {
+//                dayOfMonth1 += date1.charAt(i);
+//            }
+//
+//            i = 0;
+//            spaceCount = 0;
+//            String dayOfMonth2 = "";
+//            while (i < date2.length() && spaceCount < 2) {
+//                if (date2.charAt(i) == ' ') {
+//                    spaceCount++;
+//                }
+//                // Go to the next letter in the variable
+//                i++;
+//            }
+//            while (i < date2.length()) {
+//                dayOfMonth2 += date2.charAt(i);
+//            }
+//
+//            int d1 = Integer.parseInt(dayOfMonth1);
+//            int d2 = Integer.parseInt(dayOfMonth2);
+//
+//
+//
+//            /*For ascending order*/
+//            return d1 - d2;
             return date1.compareTo(date2);
         }};
 
@@ -145,7 +190,7 @@ public class Game {
             int num1 = g1.getNumPlayers();
             int num2 = g2.getNumPlayers();
 
-            /*For ascending order*/
-            return num1 - num2;
+            /*For ascending order to show most developed games to least developed games*/
+            return num2 - num1;
         }};
 }

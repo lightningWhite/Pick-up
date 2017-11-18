@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         if (_gamesMasterList.isEmpty()) {
             Log.d("MainActivity", "The _gamesMasterList list was empty. Generating new _gamesMasterList...");
             // Instantiate our AsyncTask class for generating a list of _gamesMasterList and populating the  list
-            PopulateListTask populateListTask = new PopulateListTask(_gameAdapter, MainActivity.this, _gamesMasterList);
+            PopulateListTask populateListTask = new PopulateListTask(_gameAdapter,MainActivity.this, _gamesMasterList, _gamesDisplayList);
             populateListTask.execute();
+        } else {
+            // Start out with the _gamesDisplayList filled with all the items in the master games list
+            _gamesDisplayList.addAll(_gamesMasterList);
+            Log.d(TAG, "Number of items in the _gamesDisplayList = " + Integer.toString(_gamesDisplayList.size()));
+            //_gameAdapter.updateGamesList(_gamesMasterList);
         }
-
-        // Start out with the _gamesDisplayList filled with all the items in the master games list
-        _gamesDisplayList.addAll(_gamesMasterList);
-        Log.d(TAG, "Number of items in the _gamesDisplayList = " + Integer.toString(_gamesDisplayList.size()));
-        _gameAdapter.updateGamesList(_gamesMasterList);
 
         /* Listener for when a game is selected to show the details of the game */
         gamesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
         String selectedTimeString = selectedTime.getText().toString();
 
-        Spinner playersSpinner = (Spinner) findViewById(R.id.gamesSpinner);
+        Spinner playersSpinner = (Spinner) findViewById(R.id.numPlayersSpinner);
         int numPlayers = 0;
 
         boolean isGameChecked = ((CheckBox) findViewById(R.id.gameTypeCheckBox)).isChecked();
@@ -308,7 +308,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         }
         if (isPlayersChecked) {
             numChecks++;
-            numPlayers = Integer.parseInt(playersSpinner.getSelectedItem().toString()); // TODO: BUG
+            if (!playersSpinner.getSelectedItem().toString().contentEquals("Players")) {
+                numPlayers = Integer.parseInt(playersSpinner.getSelectedItem().toString()); // TODO: BUG
+            }
+            else {
+                numPlayers = 0;
+            }
         }
 
 //        if (numChecks > 1)
@@ -322,7 +327,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 Log.d(TAG, "COMPARE TO: " );
                 Log.d(TAG, selectedGameString);
 
-                if (game.getGameType().equals(selectedGameString)) {
+                // If default value, add all games, and we'll sort them if it's the only checked one
+                if (selectedGameString.equals("Game Selection")) {
+                    _tempFilterList.add(game);
+                }
+                else if (game.getGameType().equals(selectedGameString)) {
                     _tempFilterList.add(game);
                 }
             }
@@ -333,7 +342,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 Log.d(TAG, game.getDate());
                 Log.d(TAG, "--COMPARE TO: " );
                 Log.d(TAG, selectedDateString);
-                if (game.getDate().equals(selectedDateString)) {
+
+                if (selectedDateString.equals("Select a Date"))
+                {
+                    _tempFilterList.add(game);
+                }
+                else if (game.getDate().equals(selectedDateString)) {
                     _tempFilterList.add(game);
                 }
             }
@@ -343,7 +357,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 Log.d(TAG, game.getTime());
                 Log.d(TAG, "++COMPARE TO: " );
                 Log.d(TAG, selectedTimeString);
-                if (game.getTime().equals(selectedTimeString)) {
+                if (selectedTimeString.equals("Select a Time"))
+                {
+                    _tempFilterList.add(game);
+                }
+                else if (game.getTime().equals(selectedTimeString)) {
                     _tempFilterList.add(game);
                 }
             }
@@ -353,15 +371,18 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                 Log.d(TAG, Integer.toString(game.getNumPlayers()));
                 Log.d(TAG, "##COMPARE TO: " );
                 Log.d(TAG, Integer.toString(numPlayers));
+                if (numPlayers == 0) {
+                    _tempFilterList.add(game);
+                }
                 if (game.getNumPlayers() == numPlayers) {
                     _tempFilterList.add(game);
                 }
-
             }
         }
 
         // Sort the list if only one check box is checked Todo: and it's the default value
         if (numChecks == 1) {
+
             if (isGameChecked) {
                 Collections.sort(_tempFilterList, Game.GameTypeComparator);
             } else if (isDateChecked) {
@@ -385,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         _gamesDisplayList.clear();
         _gamesDisplayList.addAll(_tempFilterList);
         Log.d(TAG, "THIS IS THE SIZE OF THE SORTED LIST: " + Integer.toString(_gamesDisplayList.size()));
-        _gameAdapter.updateGamesList(_gamesDisplayList);
+        //_gameAdapter.updateGamesList(_gamesDisplayList);
+        _gameAdapter.notifyDataSetChanged();
     }
 }

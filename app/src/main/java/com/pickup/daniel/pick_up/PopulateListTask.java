@@ -3,13 +3,7 @@ package com.pickup.daniel.pick_up;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -43,13 +37,15 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
     Context _currentContext;
     // We need to pass the Array Adapter here so we can use it
     GameAdapter _theAdapter;
-    List<Game> _games;
+    List<Game> _gamesMasterList;
+    List<Game> _gamesDisplayList;
 
-    PopulateListTask(GameAdapter theAdapter, Context theContext, List<Game> games) {
+    PopulateListTask(GameAdapter theAdapter, Context theContext, List<Game> gamesMasterList, List<Game> gamesDisplayList) {
 
         _theAdapter = theAdapter;
         _currentContext = theContext;
-        _games = games;
+        _gamesMasterList = gamesMasterList;
+        _gamesDisplayList = gamesDisplayList;
     }
 
     // Main thread
@@ -118,10 +114,13 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
 
             newGame.setComments("Come for a great game!");
             newGame.setDate(day + " Dec " + date);
-            float month = 12; // THIS IS JUST A PLACE HOLDER
+            int month = 12; // THIS IS JUST A PLACE HOLDER
             String filterDate = Float.toString(month) + Integer.toString(date);
             // Associate filter data
-            filterData.add(2, Float.parseFloat(filterDate));
+            float dateAsFloat = Float.parseFloat(filterDate);
+            filterData.add(2, dateAsFloat);
+            newGame.set_compareDate(Float.toString(dateAsFloat)); // This is the one to keep (new method for filtering)
+
 
             // Generate a random number of players
             low = 1;
@@ -182,12 +181,15 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
     @Override
     protected void onProgressUpdate(Game... values) {
         super.onProgressUpdate(values);
-        _theAdapter.add(values[0]);
+        _gamesMasterList.add(values[0]);
+        _gamesDisplayList.add(values[0]);
     }
 
     // Main thread.
     @Override
     protected void onPostExecute(Void aVoid) {
+        //_theAdapter.notifyDataSetChanged();
         super.onPostExecute(aVoid);
+
     }
 }
