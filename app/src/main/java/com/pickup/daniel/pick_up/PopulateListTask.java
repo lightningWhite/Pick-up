@@ -25,7 +25,7 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             "Racquetball", "Rugby", "Softball", "Soccer", "Spike Ball", "Ultimate Frisbee",
             "Volley Ball", "Walley Ball"};
 
-    String days[] = {"Mon", "Tue", "Wed", "Thur", "Fri", "Sat"};
+    String days[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
     // 28 players
     String players[] = {"Joe", "Sally", "John", "Caleb", "Kevin", "Corey", "Robert", "Ryan",
@@ -80,6 +80,9 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
         int low = 0;
         int high = 0;
 
+        // Associate all of the game's fields with Integer values for easy filtering
+        List<Float> filterData = new ArrayList<>();
+
         for (int i = 0; i < numGames; i++) {
             Game newGame = new Game();
 
@@ -88,14 +91,20 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             // Generate a random game
             low = 0;
             high = 13;
-            game = games[rand.nextInt(high-low) + low];
+            int gameTypeIndex = rand.nextInt(high-low) + low;
+            game = games[gameTypeIndex];
             newGame.setGameType(game);
+            // Associate filter data
+            filterData.add(0, (float)gameTypeIndex);
+
 
             // Generate an hour between 3 and 10
             low = 3;
             high = 10 + 1;
             hour = rand.nextInt(high-low) + low;
             newGame.setTime(hour + ":00PM");
+            // Associate filter data
+            filterData.add(1, (float)hour);
 
             // Generate a random day between Monday and Saturday
             low =0;
@@ -108,13 +117,19 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             date = rand.nextInt(high-low) + low;
 
             newGame.setComments("Come for a great game!");
-            newGame.setDate(day + ". Nov " + date + ", 2017");
+            newGame.setDate(day + " Dec " + date);
+            float month = 12; // THIS IS JUST A PLACE HOLDER
+            String filterDate = Float.toString(month) + Integer.toString(date);
+            // Associate filter data
+            filterData.add(2, Float.parseFloat(filterDate));
 
             // Generate a random number of players
             low = 1;
             high = 16;
             numPlayers = rand.nextInt(high-low) + low;
             newGame.setNumPlayers(numPlayers);
+            // Associate filter data
+            filterData.add(3, (float)numPlayers);
 
             // Create the string that will be displayed in the list view
             listItem = game + " - " + hour + ":00PM, " + day + " " + date + " - Players: " + numPlayers;
@@ -154,8 +169,10 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             }
             newGame.setPlayers(playerList);
 
+            // Add the filter data
+            newGame.setFilterData(filterData);
+
             publishProgress(newGame);
-            //_games.add(newGame);
         }
 
         return null;
