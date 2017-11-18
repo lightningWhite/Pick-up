@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     GameAdapter _gameAdapter;
     ArrayList<Game> _gamesMasterList = new ArrayList<>(); // Master games list
     ArrayList<Game> _gamesDisplayList = new ArrayList<>(); // Filtered display games list
-    ArrayList<Game> _tempFilterList = new ArrayList<>(); // Temp list used for filtering and sorting
     String dateFromDatePicker;
     int hourOfDayFromTimePicker;
     int minuteFromTimePicker;
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         SharedPreferences contactPref = this.getSharedPreferences(GAMES_FILE, MODE_PRIVATE);
         Gson gson = new Gson();
 
+        // Comment out this chunk to generate new data
         // Get the stored json list of _gamesMasterList. This populates the list. Note: This line prevents it from populating the list in the PopulateListTask
         _gamesMasterList = gson.fromJson(contactPref.getString(GAME_KEY, null),
                 new TypeToken<ArrayList<Game>>() {
@@ -271,7 +271,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         // If only the default values are selected,
 
         // Start with a fresh list
-        _tempFilterList.clear();
+        ArrayList<Game> tempFilterList = new ArrayList<>(); // Temp list used for filtering and sorting
+        ArrayList<Game> multipleFilterList = new ArrayList<>(); // Temp list used for filtering with multiple filters
 
         // Get the gamesSpinner
         Spinner gamesSpinner = (Spinner) findViewById(R.id.gamesSpinner);
@@ -319,63 +320,130 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 //        if (numChecks > 1)
 //            doSort = false;
 
+        // Used to do multiple filters
+        boolean isFirstFilterDone = false;
+
         // Filter the list according to check boxes
         if (isGameChecked) {
-            // Add all of the matching games to the tempList
-            for (Game game : _gamesMasterList) {
-                Log.d(TAG, game.getGameType());
-                Log.d(TAG, "COMPARE TO: " );
-                Log.d(TAG, selectedGameString);
+            // Add from _gamesMasterList if only one is checked or if the first filter hasn't been done yet
+            if (numChecks == 1 || !isFirstFilterDone) {
+                isFirstFilterDone = true; // Indicate that the first filter has been performed
+                // Add all of the matching games to the tempList
+                for (Game game : _gamesMasterList) {
+                    Log.d(TAG, game.getGameType());
+                    Log.d(TAG, "COMPARE TO: ");
+                    Log.d(TAG, selectedGameString);
 
-                // If default value, add all games, and we'll sort them if it's the only checked one
-                if (selectedGameString.equals("Game Selection")) {
-                    _tempFilterList.add(game);
+                    // If default value, add all games, and we'll sort them if it's the only checked one
+                    if (selectedGameString.equals("Game Selection")) {
+                        tempFilterList.add(game);
+                    } else if (game.getGameType().equals(selectedGameString)) {
+                        tempFilterList.add(game);
+                    }
                 }
-                else if (game.getGameType().equals(selectedGameString)) {
-                    _tempFilterList.add(game);
+            }
+            else {
+                // Pull from the tempFilterList the ones that fit the additional filter
+                for (Game game : tempFilterList) {
+                    Log.d(TAG, game.getGameType());
+                    Log.d(TAG, "COMPARE TO: ");
+                    Log.d(TAG, selectedGameString);
+
+                    // If default value, add all games, and we'll sort them if it's the only checked one
+                    if (selectedGameString.equals("Game Selection")) {
+                        multipleFilterList.add(game);
+                    } else if (game.getGameType().equals(selectedGameString)) {
+                        multipleFilterList.add(game);
+                    }
                 }
             }
         }
+
         if (isDateChecked) {
-            // Add all of the matching dates to the list
-            for (Game game : _gamesMasterList) {
-                Log.d(TAG, game.getDate());
-                Log.d(TAG, "--COMPARE TO: " );
-                Log.d(TAG, selectedDateString);
+            if (numChecks == 1 || !isFirstFilterDone) {
+                isFirstFilterDone = true; // Indicate that the first filter has been performed
+                // Add all of the matching dates to the list
+                for (Game game : _gamesMasterList) {
+                    Log.d(TAG, game.getDate());
+                    Log.d(TAG, "--COMPARE TO: ");
+                    Log.d(TAG, selectedDateString);
 
-                if (selectedDateString.equals("Select a Date"))
-                {
-                    _tempFilterList.add(game);
+                    if (selectedDateString.equals("Select a Date")) {
+                        tempFilterList.add(game);
+                    } else if (game.getDate().equals(selectedDateString)) {
+                        tempFilterList.add(game);
+                    }
                 }
-                else if (game.getDate().equals(selectedDateString)) {
-                    _tempFilterList.add(game);
+            }
+            else {
+                for (Game game : tempFilterList) {
+                    Log.d(TAG, game.getDate());
+                    Log.d(TAG, "--COMPARE TO: ");
+                    Log.d(TAG, selectedDateString);
+
+                    if (selectedDateString.equals("Select a Date")) {
+                        multipleFilterList.add(game);
+                    } else if (game.getDate().equals(selectedDateString)) {
+                        multipleFilterList.add(game);
+                    }
                 }
             }
         }
+
         if (isTimeChecked) {
-            for (Game game : _gamesMasterList) {
-                Log.d(TAG, game.getTime());
-                Log.d(TAG, "++COMPARE TO: " );
-                Log.d(TAG, selectedTimeString);
-                if (selectedTimeString.equals("Select a Time"))
-                {
-                    _tempFilterList.add(game);
+            if (numChecks == 1 || !isFirstFilterDone) {
+                isFirstFilterDone = true; // Indicate that the first filter has been performed
+                for (Game game : _gamesMasterList) {
+                    Log.d(TAG, game.getTime());
+                    Log.d(TAG, "++COMPARE TO: ");
+                    Log.d(TAG, selectedTimeString);
+                    if (selectedTimeString.equals("Select a Time")) {
+                        tempFilterList.add(game);
+                    } else if (game.getTime().equals(selectedTimeString)) {
+                        tempFilterList.add(game);
+                    }
                 }
-                else if (game.getTime().equals(selectedTimeString)) {
-                    _tempFilterList.add(game);
+            }
+            else {
+                for (Game game : tempFilterList) {
+                    Log.d(TAG, game.getTime());
+                    Log.d(TAG, "++COMPARE TO: ");
+                    Log.d(TAG, selectedTimeString);
+                    if (selectedTimeString.equals("Select a Time")) {
+                        multipleFilterList.add(game);
+                    } else if (game.getTime().equals(selectedTimeString)) {
+                        multipleFilterList.add(game);
+                    }
                 }
             }
         }
+
         if (isPlayersChecked) {
-            for (Game game : _gamesMasterList) {
-                Log.d(TAG, Integer.toString(game.getNumPlayers()));
-                Log.d(TAG, "##COMPARE TO: " );
-                Log.d(TAG, Integer.toString(numPlayers));
-                if (numPlayers == 0) {
-                    _tempFilterList.add(game);
+            if (numChecks == 1 || !isFirstFilterDone) {
+                isFirstFilterDone = true; // Indicate that the first filter has been performed
+                for (Game game : _gamesMasterList) {
+                    Log.d(TAG, Integer.toString(game.getNumPlayers()));
+                    Log.d(TAG, "##COMPARE TO: ");
+                    Log.d(TAG, Integer.toString(numPlayers));
+                    if (numPlayers == 0) {
+                        tempFilterList.add(game);
+                    }
+                    if (game.getNumPlayers() == numPlayers) {
+                        tempFilterList.add(game);
+                    }
                 }
-                if (game.getNumPlayers() == numPlayers) {
-                    _tempFilterList.add(game);
+            }
+            else {
+                for (Game game : tempFilterList) {
+                    Log.d(TAG, Integer.toString(game.getNumPlayers()));
+                    Log.d(TAG, "##COMPARE TO: ");
+                    Log.d(TAG, Integer.toString(numPlayers));
+                    if (numPlayers == 0) {
+                        multipleFilterList.add(game);
+                    }
+                    if (game.getNumPlayers() == numPlayers) {
+                        multipleFilterList.add(game);
+                    }
                 }
             }
         }
@@ -384,27 +452,33 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         if (numChecks == 1) {
 
             if (isGameChecked) {
-                Collections.sort(_tempFilterList, Game.GameTypeComparator);
+                Collections.sort(tempFilterList, Game.GameTypeComparator);
             } else if (isDateChecked) {
-                Collections.sort(_tempFilterList, Game.DateComparator);
+                Collections.sort(tempFilterList, Game.DateComparator);
 
             } else if (isTimeChecked) {
-                Collections.sort(_tempFilterList, Game.TimeComparator);
+                Collections.sort(tempFilterList, Game.TimeComparator);
 
             } else if (isPlayersChecked) {
-                Collections.sort(_tempFilterList, Game.NumPlayersComparator);
+                Collections.sort(tempFilterList, Game.NumPlayersComparator);
 
             }
         }
         else if (numChecks == 0) {
             // Fill it back up if no checks are present
-            _tempFilterList.addAll(_gamesMasterList);
+            tempFilterList.addAll(_gamesMasterList);
             //_tempFilterList = _gamesMasterList;
         }
 
         // Assign the display list to the filtered/sorted list and notify the adapter the set changed
         _gamesDisplayList.clear();
-        _gamesDisplayList.addAll(_tempFilterList);
+
+        if (numChecks <= 1) {
+            _gamesDisplayList.addAll(tempFilterList);
+        }
+        else if (numChecks > 1) {
+            _gamesDisplayList.addAll(multipleFilterList);
+        }
         Log.d(TAG, "THIS IS THE SIZE OF THE SORTED LIST: " + Integer.toString(_gamesDisplayList.size()));
         //_gameAdapter.updateGamesList(_gamesDisplayList);
         _gameAdapter.notifyDataSetChanged();

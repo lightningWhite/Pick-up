@@ -11,8 +11,12 @@ import java.util.List;
 public class Game {
     String gameType;
     String comments;
-    String date;
+    String day;
+    int dayOfMonth;
+    int month;
+    String date; // Day Month dayOfMonth
     String time;
+    int hour;
     String location;
     String listString;
     int numPlayers;
@@ -110,6 +114,38 @@ public class Game {
         this._compareDate = compareDate;
     }
 
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public int getDayOfMonth() {
+        return dayOfMonth;
+    }
+
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
     /*Comparator for sorting the list by game type*/
     public static Comparator<Game> GameTypeComparator = new Comparator<Game>() {
 
@@ -127,8 +163,17 @@ public class Game {
 
         public int compare(Game g1, Game g2) {
 
-            String date1 = g1.getDate();
-            String date2 = g2.getDate();
+            //int month1 = g1.getMonth();
+            int dayOfMonth1 = g1.getDayOfMonth();
+            //int month2 = g2.getMonth();
+            int dayOfMonth2 = g2.getDayOfMonth();
+
+            //?????int monthComp = month1 - month2;
+            return  dayOfMonth1 - dayOfMonth2;
+
+
+//            String date1 = g1.getDate();
+//            String date2 = g2.getDate();
 
             // Place each character of the variable into a string until end of block or end of
             // string
@@ -167,7 +212,7 @@ public class Game {
 //
 //            /*For ascending order*/
 //            return d1 - d2;
-            return date1.compareTo(date2);
+            //return date1.compareTo(date2);
         }};
 
     /*Comparator for sorting the list by time*/
@@ -175,11 +220,11 @@ public class Game {
 
         public int compare(Game g1, Game g2) {
 
-            String time1 = g1.getTime();
-            String time2 = g2.getTime();
+            int hour1 = g1.getHour();
+            int hour2 = g2.getHour();
 
             /*For ascending order*/
-            return time1.compareTo(time2);
+            return hour1 - hour2;
         }};
 
     /*Comparator for sorting the list by number of players*/

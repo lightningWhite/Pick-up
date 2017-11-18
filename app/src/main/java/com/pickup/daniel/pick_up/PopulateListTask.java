@@ -98,6 +98,7 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             low = 3;
             high = 10 + 1;
             hour = rand.nextInt(high-low) + low;
+            newGame.setHour(hour);
             newGame.setTime(hour + ":00PM");
             // Associate filter data
             filterData.add(1, (float)hour);
@@ -113,8 +114,11 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
             date = rand.nextInt(high-low) + low;
 
             newGame.setComments("Come for a great game!");
+            newGame.setDay(day);
+            newGame.setDayOfMonth(date);
+            int month = 12;
+            newGame.setMonth(month);
             newGame.setDate(day + " Dec " + date);
-            int month = 12; // THIS IS JUST A PLACE HOLDER
             String filterDate = Float.toString(month) + Integer.toString(date);
             // Associate filter data
             float dateAsFloat = Float.parseFloat(filterDate);
