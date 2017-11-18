@@ -17,15 +17,15 @@ import java.util.List;
 
 public class GameAdapter extends ArrayAdapter<Game> {
 
-    List<Game> _items;
+    List<Game> _gamesDisplayList;
 
     private static class ViewHolder {
         private TextView itemView;
     }
 
-    public GameAdapter(Context context, int textViewResourceId, List<Game> items) {
-        super(context, textViewResourceId, items);
-        _items = items;
+    public GameAdapter(Context context, int textViewResourceId, List<Game> gamesDisplayList) {
+        super(context, textViewResourceId, gamesDisplayList);
+        _gamesDisplayList = gamesDisplayList;
     }
 
     @Override
@@ -58,8 +58,8 @@ public class GameAdapter extends ArrayAdapter<Game> {
     }
 
     public void updateGamesList(List<Game> newlist) {
-        _items.clear();
-        _items.addAll(newlist);
+        _gamesDisplayList.clear();
+        _gamesDisplayList.addAll(newlist);
         this.notifyDataSetChanged();
     }
 }
