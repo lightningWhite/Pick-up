@@ -21,6 +21,7 @@ public class Game {
     String listString;
     int numPlayers;
     String _compareDate;
+    int positionInMasterList;
 
     // This filter data will be used for the predicate in the sorting of the games list
     // Index: 0 = GameType, 1 = Hour.Minute, 2 = Month.DayOfMonth, 3 = NumPlayers
@@ -144,6 +145,14 @@ public class Game {
 
     public void setHour(int hour) {
         this.hour = hour;
+    }
+
+    public int getPositionInMasterList() {
+        return positionInMasterList;
+    }
+
+    public void setPositionInMasterList(int positionInMasterList) {
+        this.positionInMasterList = positionInMasterList;
     }
 
     /*Comparator for sorting the list by game type*/

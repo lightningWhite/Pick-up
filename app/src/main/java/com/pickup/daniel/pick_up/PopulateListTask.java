@@ -81,7 +81,7 @@ public class PopulateListTask extends AsyncTask<Void, Game, Void> {
 
         for (int i = 0; i < numGames; i++) {
             Game newGame = new Game();
-
+            newGame.setPositionInMasterList(i);
             listItem = "";
 
             // Generate a random game

@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 
 public class MainActivity extends AppCompatActivity implements DatePickerFragment.DatePickerFragmentListener, TimePickerFragment.TimePickerFragmentListener {
     public static final String EXTRA_GAME = "com.example.daniel.GAME";
+    public static final String EXTRA_GAME_POS = "com.example.daniel.GAME_POS";
     final String GAMES_FILE = "savedGames";
     final String GAME_KEY = "gameKey";
     final String TAG = "MainActivity";
@@ -106,13 +107,45 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
                 // Convert the game object to JSON so I can pass it to the details activity
                 Gson gson = new Gson();
-                String jsonGame = gson.toJson(_gamesMasterList.get(myItemInt));
+                //String jsonGame = gson.toJson(_gamesMasterList.get(myItemInt));
+                String jsonGamePos = gson.toJson(selectedFromList.getPositionInMasterList()); // TODO: I should just pass the game that has its own master index
 
                 // Start the details activity
                 Intent intent = new Intent(MainActivity.this, DisplayDetailsActivity.class);
-                intent.putExtra(EXTRA_GAME, jsonGame);
+                //intent.putExtra(EXTRA_GAME, jsonGame);
+                intent.putExtra(EXTRA_GAME_POS, jsonGamePos);
                 startActivity(intent);
             }
+        });
+
+        // Make sure the check box is unchecked when a new selection is made
+        Spinner gamesSpinner = (Spinner) findViewById(R.id.gamesSpinner);
+        gamesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                ((CheckBox) findViewById(R.id.gameTypeCheckBox)).setChecked(false);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        // Make sure the check box is unchecked when a new selection is made
+        Spinner playersSpinner = (Spinner) findViewById(R.id.numPlayersSpinner);
+        playersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                ((CheckBox) findViewById(R.id.numPlayersCheckBox)).setChecked(false);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
         });
     }
 
@@ -212,12 +245,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
     public void onDateButton(View view) {
         DatePickerFragment fragment = DatePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
+        ((CheckBox) findViewById(R.id.dateCheckBox)).setChecked(false);
         // The date will be sent to the onDateSet listener
     }
 
     public void onTimeButton(View view) {
         TimePickerFragment fragment = TimePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
+        ((CheckBox) findViewById(R.id.timeCheckBox)).setChecked(false);
         // The date will be sent to the onDateSet listener
     }
 

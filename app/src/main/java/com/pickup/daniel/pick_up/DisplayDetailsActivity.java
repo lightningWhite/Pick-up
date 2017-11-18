@@ -2,6 +2,7 @@ package com.pickup.daniel.pick_up;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,10 +13,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayDetailsActivity extends AppCompatActivity {
+
+    final String GAMES_FILE = "savedGames";
+    final String GAME_KEY = "gameKey";
+
+    private List<Game> _gamesList;
+    private int _gamePos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +32,25 @@ public class DisplayDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_details);
 
         Intent intent = getIntent();
-        String jsonGame = intent.getStringExtra(MainActivity.EXTRA_GAME);
+        String jsonGamePos = intent.getStringExtra(MainActivity.EXTRA_GAME_POS);
+        //String jsonGame = intent.getStringExtra(MainActivity.EXTRA_GAME);
 
         Gson gson = new Gson();
-        Game game = gson.fromJson(jsonGame, Game.class);
+
+        // Get the _gamesMasterList
+        SharedPreferences gamesPref = this.getSharedPreferences(GAMES_FILE, MODE_PRIVATE);
+        _gamesList = gson.fromJson(gamesPref.getString(GAME_KEY, null),
+                new TypeToken<ArrayList<Game>>() {
+                }.getType());
+
+        //String stringGamePos = gamesPref.getString(MainActivity.EXTRA_GAME_POS, null);
+        _gamePos = Integer.parseInt(jsonGamePos);
+
+        Game game;
+        game = _gamesList.get(_gamePos);
+
+        // Get the stored master position so we can update the right game
+        _gamePos = game.getPositionInMasterList();
 
         TextView gameType = (TextView) findViewById(R.id.gameType);
         gameType.setText(game.gameType);
@@ -55,7 +79,7 @@ public class DisplayDetailsActivity extends AppCompatActivity {
         }
     }
 
-    String m_Text;
+    String playerName;
 
     public void onJoin(View view) {
 
@@ -72,7 +96,8 @@ public class DisplayDetailsActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
+                playerName = input.getText().toString();
+                onSaveListen();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -84,4 +109,41 @@ public class DisplayDetailsActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+    public void onSaveListen() {
+        // Add the player name to the list of players that have joined the game
+        _gamesList.get(_gamePos).getPlayers().add(playerName);
+        // Increment the number of players that have joined the game
+        _gamesList.get(_gamePos).setNumPlayers(_gamesList.get(_gamePos).getNumPlayers() + 1);
+
+        TextView playersBlock = (TextView) findViewById(R.id.playersBlock);
+        playersBlock.setText("");
+        List<String> players = _gamesList.get(_gamePos).getPlayers();
+        for(int i = 0; i < players.size(); i++) {
+            Log.d("GamePlayerSize", Integer.toString(_gamesList.get(_gamePos).getPlayers().size()));
+            if (i < players.size() - 1) {
+                playersBlock.append(players.get(i) + ", ");
+            }
+            else {
+                // Don't put a comma after the last one
+                playersBlock.append(players.get(i));
+            }
+        }
+
+        // Update the shared preferences with the edited game
+        SharedPreferences gamesPref = this.getSharedPreferences(GAMES_FILE, MODE_PRIVATE);
+        Gson gson = new Gson();
+
+        SharedPreferences.Editor prefsEditor = gamesPref.edit();
+
+        // Convert the games list into a json string
+        String json = gson.toJson(_gamesList);
+        Log.d("MainActivity", json);
+
+        // Update the _gamesMasterList with the modified _game
+        prefsEditor.putString(GAME_KEY, json);
+        prefsEditor.commit();
+
+    }
 }
+
