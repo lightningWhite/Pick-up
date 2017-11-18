@@ -1,9 +1,7 @@
 package com.pickup.daniel.pick_up;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v4.view.TintableBackgroundView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,28 +9,28 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity implements DatePickerFragment.DatePickerFragmentListener, TimePickerFragment.TimePickerFragmentListener {
     public static final String EXTRA_GAME = "com.example.daniel.GAME";
     final String GAMES_FILE = "savedGames";
     final String GAME_KEY = "gameKey";
+    final String TAG = "MainActivity";
 
     GameAdapter _gameAdapter;
-    ArrayList<Game> _gamesList = new ArrayList<>();
+    ArrayList<Game> _gamesMasterList = new ArrayList<>(); // Master games list
+    ArrayList<Game> _gamesDisplayList = new ArrayList<>(); // Filtered display games list
+    ArrayList<Game> _tempFilterList = new ArrayList<>(); // Temp list used for filtering and sorting
     String dateFromDatePicker;
     int hourOfDayFromTimePicker;
     int minuteFromTimePicker;
@@ -68,32 +66,37 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         // Apply the adapter to the spinner
         numPlayersSpinner.setAdapter(numPlayersSpinnerAdapter);
 
-        // Load the SharedPreferences file containing the _gamesList that were saved for activity switches
+        // Load the SharedPreferences file containing the _gamesMasterList that were saved for activity switches
         SharedPreferences contactPref = this.getSharedPreferences(GAMES_FILE, MODE_PRIVATE);
         Gson gson = new Gson();
 
-        // Get the stored json list of _gamesList. This populates the list. Note: This line prevents it from populating the list in the PopulateListTask
-        _gamesList = gson.fromJson(contactPref.getString(GAME_KEY, null),
+        // Get the stored json list of _gamesMasterList. This populates the list. Note: This line prevents it from populating the list in the PopulateListTask
+        _gamesMasterList = gson.fromJson(contactPref.getString(GAME_KEY, null),
                 new TypeToken<ArrayList<Game>>() {
                 }.getType());
 
         // If there are no saved games in the shared preferences, allocate a new ArrayList
-        if (_gamesList == null) {
-            _gamesList = new ArrayList<>();
+        if (_gamesMasterList == null) {
+            _gamesMasterList = new ArrayList<>();
         }
 
         // Create the games adapter so we can populate the gamesListView
-        _gameAdapter = new GameAdapter(this, android.R.layout.simple_selectable_list_item, _gamesList);
+        _gameAdapter = new GameAdapter(this, android.R.layout.simple_selectable_list_item, _gamesDisplayList);
         final ListView gamesListView = (ListView) findViewById(R.id.gamesListView);
         gamesListView.setAdapter(_gameAdapter);
 
         // Initially populate the list with random games if none exist in the preferences to load
-        if (_gamesList.isEmpty()) {
-            Log.d("MainActivity", "The _gamesList list was empty. Generating new _gamesList...");
-            // Instantiate our AsyncTask class for generating a list of _gamesList and populating the  list
-            PopulateListTask populateListTask = new PopulateListTask(_gameAdapter, MainActivity.this, _gamesList);
+        if (_gamesMasterList.isEmpty()) {
+            Log.d("MainActivity", "The _gamesMasterList list was empty. Generating new _gamesMasterList...");
+            // Instantiate our AsyncTask class for generating a list of _gamesMasterList and populating the  list
+            PopulateListTask populateListTask = new PopulateListTask(_gameAdapter, MainActivity.this, _gamesMasterList);
             populateListTask.execute();
         }
+
+        // Start out with the _gamesDisplayList filled with all the items in the master games list
+        _gamesDisplayList.addAll(_gamesMasterList);
+        Log.d(TAG, "Number of items in the _gamesDisplayList = " + Integer.toString(_gamesDisplayList.size()));
+        _gameAdapter.updateGamesList(_gamesMasterList);
 
         /* Listener for when a game is selected to show the details of the game */
         gamesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
 
                 // Convert the game object to JSON so I can pass it to the details activity
                 Gson gson = new Gson();
-                String jsonGame = gson.toJson(_gamesList.get(myItemInt));
+                String jsonGame = gson.toJson(_gamesMasterList.get(myItemInt));
 
                 // Start the details activity
                 Intent intent = new Intent(MainActivity.this, DisplayDetailsActivity.class);
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         Gson gson = new Gson();
 
         // Convert the contacts list into a json string
-        String json = gson.toJson(_gamesList);
+        String json = gson.toJson(_gamesMasterList);
         Log.d("MainActivity", json);
 
         prefsEditor.putString(GAME_KEY, json);
@@ -218,13 +221,170 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         // The date will be sent to the onDateSet listener
     }
 
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
+//    public void showDatePickerDialog(View v) {
+//        DialogFragment newFragment = new DatePickerFragment();
+//        newFragment.show(getFragmentManager(), "datePicker");
+//    }
+//
+//    public void showTimePickerDialog(View v) {
+//        DialogFragment newFragment = new TimePickerFragment();
+//        newFragment.show(getFragmentManager(), "timePicker");
+//    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        //boolean checked = ((CheckBox) view).isChecked();
+        Log.d(TAG, "THIS IS IN IN THE ON CHECK BOX CLICKED!!!");
+        filterGamesDisplayList();
     }
 
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), "timePicker");
+//    public void onFilterGameType() {
+//        // Toggle a boolean indicating the box is checked. Call filterGamesList()
+//        _isGameChecked = !_isGameChecked;
+//        filterGamesDisplayList();
+//    }
+//
+//    public void onFilterDate() {
+//        // Toggle a boolean indicating the box is checked. Call filterGamesList()
+//        _isDateChecked = !_isDateChecked;
+//        filterGamesDisplayList();
+//
+//    }
+//
+//    public void onFilterTime() {
+//        // Toggle a boolean indicating the box is checked. Call filterGamesList()
+//        _isTimeChecked = !_isTimeChecked;
+//        filterGamesDisplayList();
+//
+//    }
+//
+//    public void onFilterNumPlayers() {
+//        // Toggle a boolean indicating the box is checked. Call filterGamesList()
+//        _isPlayersChecked = !_isPlayersChecked;
+//        filterGamesDisplayList();
+//
+//    }
+
+    public void filterGamesDisplayList() {
+        // Check which boxes are checked, get values associated with those boxes,
+        // Loop through the master games list and add only the ones that meet the selected values
+        // If only the default values are selected,
+
+        // Start with a fresh list
+        _tempFilterList.clear();
+
+        // Get the gamesSpinner
+        Spinner gamesSpinner = (Spinner) findViewById(R.id.gamesSpinner);
+        String selectedGameString = "";
+
+        // Get the selected date
+        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
+        String selectedDateString = selectedDate.getText().toString();
+
+        // Get the selected time
+        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
+        String selectedTimeString = selectedTime.getText().toString();
+
+        Spinner playersSpinner = (Spinner) findViewById(R.id.gamesSpinner);
+        int numPlayers = 0;
+
+        boolean isGameChecked = ((CheckBox) findViewById(R.id.gameTypeCheckBox)).isChecked();
+        boolean isDateChecked = ((CheckBox) findViewById(R.id.dateCheckBox)).isChecked();
+        boolean isTimeChecked = ((CheckBox) findViewById(R.id.timeCheckBox)).isChecked();
+        boolean isPlayersChecked = ((CheckBox) findViewById(R.id.numPlayersCheckBox)).isChecked();
+
+        // Check if more than one check box is checked to know whether to sort or just filter
+//        boolean doSort = true;
+        int numChecks = 0;
+        if (isGameChecked) {
+            numChecks++;
+            selectedGameString = gamesSpinner.getSelectedItem().toString();
+        }
+        if (isDateChecked) {
+            numChecks++;
+        }
+        if (isTimeChecked) {
+            numChecks++;
+        }
+        if (isPlayersChecked) {
+            numChecks++;
+            numPlayers = Integer.parseInt(playersSpinner.getSelectedItem().toString()); // TODO: BUG
+        }
+
+//        if (numChecks > 1)
+//            doSort = false;
+
+        // Filter the list according to check boxes
+        if (isGameChecked) {
+            // Add all of the matching games to the tempList
+            for (Game game : _gamesMasterList) {
+                Log.d(TAG, game.getGameType());
+                Log.d(TAG, "COMPARE TO: " );
+                Log.d(TAG, selectedGameString);
+
+                if (game.getGameType().equals(selectedGameString)) {
+                    _tempFilterList.add(game);
+                }
+            }
+        }
+        if (isDateChecked) {
+            // Add all of the matching dates to the list
+            for (Game game : _gamesMasterList) {
+                Log.d(TAG, game.getDate());
+                Log.d(TAG, "--COMPARE TO: " );
+                Log.d(TAG, selectedDateString);
+                if (game.getDate().equals(selectedDateString)) {
+                    _tempFilterList.add(game);
+                }
+            }
+        }
+        if (isTimeChecked) {
+            for (Game game : _gamesMasterList) {
+                Log.d(TAG, game.getTime());
+                Log.d(TAG, "++COMPARE TO: " );
+                Log.d(TAG, selectedTimeString);
+                if (game.getTime().equals(selectedTimeString)) {
+                    _tempFilterList.add(game);
+                }
+            }
+        }
+        if (isPlayersChecked) {
+            for (Game game : _gamesMasterList) {
+                Log.d(TAG, Integer.toString(game.getNumPlayers()));
+                Log.d(TAG, "##COMPARE TO: " );
+                Log.d(TAG, Integer.toString(numPlayers));
+                if (game.getNumPlayers() == numPlayers) {
+                    _tempFilterList.add(game);
+                }
+
+            }
+        }
+
+        // Sort the list if only one check box is checked Todo: and it's the default value
+        if (numChecks == 1) {
+            if (isGameChecked) {
+                Collections.sort(_tempFilterList, Game.GameTypeComparator);
+            } else if (isDateChecked) {
+                Collections.sort(_tempFilterList, Game.DateComparator);
+
+            } else if (isTimeChecked) {
+                Collections.sort(_tempFilterList, Game.TimeComparator);
+
+            } else if (isPlayersChecked) {
+                Collections.sort(_tempFilterList, Game.NumPlayersComparator);
+
+            }
+        }
+        else if (numChecks == 0) {
+            // Fill it back up if no checks are present
+            _tempFilterList.addAll(_gamesMasterList);
+            //_tempFilterList = _gamesMasterList;
+        }
+
+        // Assign the display list to the filtered/sorted list and notify the adapter the set changed
+        _gamesDisplayList.clear();
+        _gamesDisplayList.addAll(_tempFilterList);
+        Log.d(TAG, "THIS IS THE SIZE OF THE SORTED LIST: " + Integer.toString(_gamesDisplayList.size()));
+        _gameAdapter.updateGamesList(_gamesDisplayList);
     }
 }
