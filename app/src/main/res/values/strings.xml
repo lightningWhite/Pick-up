@@ -6,7 +6,7 @@
     <string name="month">Month</string>
     <string name="year">Year</string>
     <string-array name="games_array">
-        <item>Game Selection</item>
+        <item>Game</item>
         <item>Basketball</item>
         <item>Badminton</item>
         <item>Football</item>

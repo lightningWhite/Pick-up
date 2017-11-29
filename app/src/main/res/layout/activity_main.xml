@@ -41,10 +41,10 @@
         android:text="@string/date"
         app:layout_constraintLeft_toLeftOf="@+id/gamesSpinner"
         app:layout_constraintRight_toRightOf="@+id/gamesSpinner"
-        app:layout_constraintTop_toBottomOf="@+id/gamesSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/numPlayersSpinner" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/timeButton"
         android:layout_width="130dp"
         android:layout_height="48dp"
         android:layout_marginLeft="16dp"
@@ -54,16 +54,16 @@
         android:text="@string/time"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectedDate" />
+        app:layout_constraintTop_toBottomOf="@+id/dateButton" />
 
     <android.support.constraint.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/guideline"
-        app:layout_constraintGuide_begin="192dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="192dp" />
+        app:layout_constraintGuide_begin="192dp"
+        tools:layout_editor_absoluteX="192dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <CheckBox
         android:id="@+id/gameTypeCheckBox"
@@ -71,27 +71,27 @@
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="onCheckboxClicked"
         app:layout_constraintLeft_toRightOf="@+id/gamesSpinner"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        android:onClick="onCheckboxClicked" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <CheckBox
         android:id="@+id/dateCheckBox"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
+        android:onClick="onCheckboxClicked"
         app:layout_constraintBaseline_toBaselineOf="@+id/dateButton"
-        app:layout_constraintLeft_toRightOf="@+id/dateButton"
-        android:onClick="onCheckboxClicked" />
+        app:layout_constraintLeft_toRightOf="@+id/dateButton" />
 
     <CheckBox
         android:id="@+id/timeCheckBox"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/button2"
-        app:layout_constraintLeft_toRightOf="@+id/button2"
-        android:onClick="onCheckboxClicked" />
+        android:onClick="onCheckboxClicked"
+        app:layout_constraintBaseline_toBaselineOf="@+id/timeButton"
+        app:layout_constraintLeft_toRightOf="@+id/timeButton" />
 
     <CheckBox
         android:id="@+id/numPlayersCheckBox"
@@ -99,9 +99,9 @@
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:onClick="onCheckboxClicked"
         app:layout_constraintStart_toEndOf="@+id/numPlayersSpinner"
-        app:layout_constraintTop_toBottomOf="@+id/selectedTime"
-        android:onClick="onCheckboxClicked" />
+        app:layout_constraintTop_toBottomOf="@+id/gamesSpinner" />
 
     <TextView
         android:id="@+id/textView3"
@@ -128,7 +128,7 @@
 
     <ListView
         android:id="@+id/gamesListView"
-        android:layout_width="173dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
@@ -136,8 +136,7 @@
         app:layout_constraintHorizontal_bias="0.272"
         app:layout_constraintLeft_toLeftOf="@+id/guideline"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/findAGame"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/numGames" />
 
     <Spinner
         android:id="@+id/numPlayersSpinner"
@@ -146,31 +145,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectedTime" />
-
-    <TextView
-        android:id="@+id/selectedDate"
-        android:layout_width="130dp"
-        android:layout_height="35dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Select a Date"
-        android:textAlignment="center"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateButton" />
-
-    <TextView
-        android:id="@+id/selectedTime"
-        android:layout_width="130dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Select a Time"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/gamesSpinner" />
 
     <TextView
         android:id="@+id/findAGame"
@@ -184,5 +159,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Find A Game" />
+
+    <TextView
+        android:id="@+id/numGames"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="35 Games"
+        app:layout_constraintBottom_toBottomOf="@+id/textView3"
+        app:layout_constraintEnd_toEndOf="@+id/gamesListView"
+        app:layout_constraintStart_toStartOf="@+id/gamesListView"
+        app:layout_constraintTop_toBottomOf="@+id/findAGame" />
 
 </android.support.constraint.ConstraintLayout>

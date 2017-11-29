@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -118,35 +120,51 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
             }
         });
 
-        // Make sure the check box is unchecked when a new selection is made
+        // Re-run the search if the selection is changed and the checkbox is checked
         Spinner gamesSpinner = (Spinner) findViewById(R.id.gamesSpinner);
         gamesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                ((CheckBox) findViewById(R.id.gameTypeCheckBox)).setChecked(false);
+                // Only rerun the filter if the checkbox is checked
+                if (((CheckBox) findViewById(R.id.gameTypeCheckBox)).isChecked()) {
+                    filterGamesDisplayList();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
             }
-
         });
 
-        // Make sure the check box is unchecked when a new selection is made
+        // Re-run the search if the selection is changed and the checkbox is checked
         Spinner playersSpinner = (Spinner) findViewById(R.id.numPlayersSpinner);
         playersSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                ((CheckBox) findViewById(R.id.numPlayersCheckBox)).setChecked(false);
+                // Only rerun the filter if the checkbox is checked
+                if (((CheckBox) findViewById(R.id.numPlayersCheckBox)).isChecked()) {
+                    filterGamesDisplayList();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
             }
-
         });
+
+        // Display the number of games found meeting the search criteria above the games ListView
+        TextView numGamesTxt = (TextView) findViewById(R.id.numGames);
+        int numGames = _gamesDisplayList.size();
+        String gameText = "";
+        if (numGames == 1) {
+            gameText = "Game";
+        }
+        else {
+            gameText = "Games";
+        }
+        numGamesTxt.setText(Integer.toString(numGames) + " " + gameText);
     }
 
     /**
@@ -181,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         // This method will be called with the date from the `DatePicker`.
         dateFromDatePicker = date.toString();
         Log.d("MainActivity", "THE ON DATE SET METHOD IS GETTING NOTIFIED!!!!!! " + dateFromDatePicker.toString());
-        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
+//        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
 
         String simpleDate = "";
 
@@ -198,12 +216,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
             // Go to the next letter in the variable
             i++;
         }
-        selectedDate.setText(simpleDate);
+//        selectedDate.setText(simpleDate);
+
+        // Update the time shown on the button
+        Button dateButton = (Button) findViewById(R.id.dateButton);
+        CharSequence btnDate = simpleDate;
+        dateButton.setText(btnDate);
+
+        // Re-run the filter if the checkbox is selected
+        if (((CheckBox) findViewById(R.id.timeCheckBox)).isChecked()) {
+            filterGamesDisplayList();
+        }
+
+
     }
 
     @Override
     public void onTimeSet(int hourOfDay, int minute) {
-        // This method will be called with the date from the `DatePicker`.
+        // This method will be called with the time from the `TimePicker`.
         hourOfDayFromTimePicker = hourOfDay;
         minuteFromTimePicker = minute;
 
@@ -237,22 +267,33 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         Log.d("MainActivity", "THE ON TIME SET METHOD IS GETTING NOTIFIED!!!!!! " +
                 displayTime);
 
-        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
-        selectedTime.setText(displayTime);
+//        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
+//        selectedTime.setText(displayTime);
+
+        // Update the time shown on the button
+        Button timeButton = (Button) findViewById(R.id.timeButton);
+        CharSequence btnTime = displayTime;
+        timeButton.setText(btnTime);
+
+        // Re-run the filter if the checkbox is checked
+        if (((CheckBox) findViewById(R.id.timeCheckBox)).isChecked()) {
+            filterGamesDisplayList();
+        }
+
 
     }
 
     public void onDateButton(View view) {
         DatePickerFragment fragment = DatePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
-        ((CheckBox) findViewById(R.id.dateCheckBox)).setChecked(false);
+        //((CheckBox) findViewById(R.id.dateCheckBox)).setChecked(false);
         // The date will be sent to the onDateSet listener
     }
 
     public void onTimeButton(View view) {
         TimePickerFragment fragment = TimePickerFragment.newInstance(this);
         fragment.show(getFragmentManager(), "datePicker");
-        ((CheckBox) findViewById(R.id.timeCheckBox)).setChecked(false);
+        //((CheckBox) findViewById(R.id.timeCheckBox)).setChecked(false);
         // The date will be sent to the onDateSet listener
     }
 
@@ -314,12 +355,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         String selectedGameString = "";
 
         // Get the selected date
-        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
-        String selectedDateString = selectedDate.getText().toString();
+//        TextView selectedDate = (TextView) findViewById(R.id.selectedDate);
+//        String selectedDateString = selectedDate.getText().toString();
+
+        // Get the selected date from the button
+        Button dateButton = (Button) findViewById(R.id.dateButton);
+        String selectedDateString = dateButton.getText().toString();
+        Log.d(TAG, "THE DATE SELECTED FROM THE BUTTON IS " + selectedDateString);
 
         // Get the selected time
-        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
-        String selectedTimeString = selectedTime.getText().toString();
+//        TextView selectedTime = (TextView) findViewById(R.id.selectedTime);
+//        String selectedTimeString = selectedTime.getText().toString();
+        Button timeButton = (Button) findViewById(R.id.timeButton);
+        String selectedTimeString = timeButton.getText().toString();
+        Log.d(TAG, "THE TIME SELECTED FROM THE BUTTON IS " + selectedTimeString);
 
         Spinner playersSpinner = (Spinner) findViewById(R.id.numPlayersSpinner);
         int numPlayers = 0;
@@ -345,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         if (isPlayersChecked) {
             numChecks++;
             if (!playersSpinner.getSelectedItem().toString().contentEquals("Players")) {
-                numPlayers = Integer.parseInt(playersSpinner.getSelectedItem().toString()); // TODO: BUG
+                numPlayers = Integer.parseInt(playersSpinner.getSelectedItem().toString());
             }
             else {
                 numPlayers = 0;
@@ -370,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, selectedGameString);
 
                     // If default value, add all games, and we'll sort them if it's the only checked one
-                    if (selectedGameString.equals("Game Selection")) {
+                    if (selectedGameString.equals("Game")) {
                         tempFilterList.add(game);
                     } else if (game.getGameType().equals(selectedGameString)) {
                         tempFilterList.add(game);
@@ -385,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, selectedGameString);
 
                     // If default value, add all games, and we'll sort them if it's the only checked one
-                    if (selectedGameString.equals("Game Selection")) {
+                    if (selectedGameString.equals("Game")) {
                         multipleFilterList.add(game);
                     } else if (game.getGameType().equals(selectedGameString)) {
                         multipleFilterList.add(game);
@@ -403,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, "--COMPARE TO: ");
                     Log.d(TAG, selectedDateString);
 
-                    if (selectedDateString.equals("Select a Date")) {
+                    if (selectedDateString.equals("Date")) {
                         tempFilterList.add(game);
                     } else if (game.getDate().equals(selectedDateString)) {
                         tempFilterList.add(game);
@@ -416,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, "--COMPARE TO: ");
                     Log.d(TAG, selectedDateString);
 
-                    if (selectedDateString.equals("Select a Date")) {
+                    if (selectedDateString.equals("Date")) {
                         multipleFilterList.add(game);
                     } else if (game.getDate().equals(selectedDateString)) {
                         multipleFilterList.add(game);
@@ -432,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, game.getTime());
                     Log.d(TAG, "++COMPARE TO: ");
                     Log.d(TAG, selectedTimeString);
-                    if (selectedTimeString.equals("Select a Time")) {
+                    if (selectedTimeString.equals("Time")) {
                         tempFilterList.add(game);
                     } else if (game.getTime().equals(selectedTimeString)) {
                         tempFilterList.add(game);
@@ -444,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
                     Log.d(TAG, game.getTime());
                     Log.d(TAG, "++COMPARE TO: ");
                     Log.d(TAG, selectedTimeString);
-                    if (selectedTimeString.equals("Select a Time")) {
+                    if (selectedTimeString.equals("Time")) {
                         multipleFilterList.add(game);
                     } else if (game.getTime().equals(selectedTimeString)) {
                         multipleFilterList.add(game);
@@ -517,5 +566,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
         Log.d(TAG, "THIS IS THE SIZE OF THE SORTED LIST: " + Integer.toString(_gamesDisplayList.size()));
         //_gameAdapter.updateGamesList(_gamesDisplayList);
         _gameAdapter.notifyDataSetChanged();
+
+        TextView numGamesTxt = (TextView) findViewById(R.id.numGames);
+        int numGames = _gamesDisplayList.size();
+        String gameText = "";
+        if (numGames == 1) {
+            gameText = "Game";
+        }
+        else {
+            gameText = "Games";
+        }
+        numGamesTxt.setText(Integer.toString(numGames) + " " + gameText);
     }
 }
