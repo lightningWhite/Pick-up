@@ -532,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerFragmen
             }
         }
 
-        // Sort the list if only one check box is checked Todo: and it's the default value
+        // Sort the list if only one check box is checked
         if (numChecks == 1) {
 
             if (isGameChecked) {

@@ -1,5 +1,6 @@
 package com.pickup.daniel.pick_up;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -144,6 +146,12 @@ public class DisplayDetailsActivity extends AppCompatActivity {
         prefsEditor.putString(GAME_KEY, json);
         prefsEditor.commit();
 
+        Context context = getApplicationContext();
+        CharSequence text = "You have joined the game!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }
 
